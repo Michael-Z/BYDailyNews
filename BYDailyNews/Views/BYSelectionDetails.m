@@ -8,19 +8,16 @@
 
 #import "BYSelectionDetails.h"
 #import "BYSelectionView.h"
-#define BYScreenWidth [UIScreen mainScreen].bounds.size.width
-#define BYScreenHeight [UIScreen mainScreen].bounds.size.height
-#define Color_maingray [UIColor colorWithRed:238.0/255 green:238.0/255 blue:238.0/255 alpha:1.0]
-
 
 @implementation BYSelectionDetails
 
-
--(void)itemSelect
+- (instancetype)initWithFrame:(CGRect)frame
 {
-    [UIView animateWithDuration:0.7 animations:^{
-        self.transform = CGAffineTransformMakeTranslation(0, -BYScreenHeight);
-    }];
+    self = [super initWithFrame:frame];
+    if (self) {
+        [self makeMainContent];
+    }
+    return self;
 }
 
 -(NSMutableArray *)views1
@@ -39,27 +36,28 @@
     return _views2;
 }
 
--(void)makeMainContentWithlistArray:(NSArray *)listArray
+-(void)makeMainContent
 {
-    NSString *plistPath = [[NSBundle mainBundle] pathForResource:@"otherProperties" ofType:@"plist"];
-    NSArray *otherValues = [[NSArray alloc] initWithContentsOfFile:plistPath];
     
+    NSString *plistPath1 = [[NSBundle mainBundle] pathForResource:@"properties" ofType:@"plist"];
+    NSMutableArray *listArray = [[NSMutableArray alloc] initWithContentsOfFile:plistPath1];
     
-    UIView *bg_view = [[UIView alloc] initWithFrame:CGRectMake(0,5*45+20,BYScreenWidth, 30)];
+    NSString *plistPath2 = [[NSBundle mainBundle] pathForResource:@"otherProperties" ofType:@"plist"];
+    NSArray *otherValues = [[NSArray alloc] initWithContentsOfFile:plistPath2];
+    
+    //点击添加频道的label和他的背景色
+    UIView *bg_view = [[UIView alloc] initWithFrame:CGRectMake(0,20+45*((listArray.count -1)/4+1),BYScreenWidth, 30)];
     bg_view.backgroundColor = Color_maingray;
     [self addSubview:bg_view];
-    
     UILabel *morevalue_label = [[UILabel alloc] initWithFrame:CGRectMake(20, 0, 100, 30)];
     morevalue_label.text = @"点击添加频道";
     morevalue_label.font = [UIFont systemFontOfSize:14];
     [bg_view addSubview:morevalue_label];
     
     NSInteger num = listArray.count;
-    CGFloat view_width = (BYScreenWidth - 20*5)/4;
-    for (int i =0; i < num; i++) {
-        NSInteger row = i/4;
-        NSInteger column = i%4;
-        BYSelectionView *view = [[BYSelectionView alloc] initWithFrame:CGRectMake(20+(20+view_width)*column, 20+45*row, view_width, 25)];
+    for (int i =0; i <num; i++) {
+        BYSelectionView *view = [[BYSelectionView alloc] init];
+        view.frame = CGRectMake(20+(20+view_width)*(i%4), 20+45*(i/4), view_width, 25);
         [view makeSelectionViewWithTitle:listArray[i]];
         [self.views1 addObject:view];
         view.tag = 1;
@@ -72,9 +70,7 @@
     
     NSInteger num2 = otherValues.count;
     for (int i=0; i<num2; i++) {
-        NSInteger row = i/4;
-        NSInteger column = i%4;
-        BYSelectionView *view = [[BYSelectionView alloc] initWithFrame:CGRectMake(20+(20+view_width)*column,CGRectGetMaxY(bg_view.frame)+20+45*row, view_width, 25)];
+        BYSelectionView *view = [[BYSelectionView alloc] initWithFrame:CGRectMake(20+(20+view_width)*(i%4),CGRectGetMaxY(bg_view.frame)+20+45*(i/4), view_width, 25)];
         [view makeSelectionViewWithTitle:otherValues[i]];
         [view setMoreChanelslabel:bg_view];
         [self.views2 addObject:view];

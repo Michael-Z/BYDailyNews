@@ -7,9 +7,5 @@
 //
 
 #import <UIKit/UIKit.h>
-
-
 @interface BYSelectNewBar : UIView
--(void)makeNewBar;
--(void)newBarHidden;
 @end

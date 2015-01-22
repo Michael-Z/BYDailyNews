@@ -9,8 +9,7 @@
 #import <UIKit/UIKit.h>
 
 @interface BYSelectionDetails : UIView
--(void)itemSelect;
--(void)makeMainContentWithlistArray:(NSArray *)listArray;
+-(void)makeMainContent;
 @property (nonatomic,strong) NSMutableArray *views1;
 @property (nonatomic,strong) NSMutableArray *views2;
 @end

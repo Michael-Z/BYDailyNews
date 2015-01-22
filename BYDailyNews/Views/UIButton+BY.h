@@ -10,6 +10,6 @@
 
 @interface UIButton (BY)
 -(void)hidbuttonClick;
--(void)deletebuttonClick;
+-(void)sortButtonClick;
 
 @end

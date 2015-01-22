@@ -7,12 +7,10 @@
 //
 
 #import "UIButton+BY.h"
-#define Color_gray  [UIColor colorWithRed:111.0/255 green:111.0/255 blue:111.0/255 alpha:1.0]
-#define border_gray [UIColor colorWithRed:200.0/255 green:200.0/255 blue:200.0/255 alpha:1.0]
+
 @implementation UIButton (BY)
 
-
--(void)deletebuttonClick
+-(void)sortButtonClick
 {
     //1 view在上方 点击后出现删除按钮  0 view在下方 始终不显示
     if (self.superview.tag == 1)
@@ -32,10 +30,6 @@
         self.tag = 0;
         self.hidden = NO;
     }
-}
--(void)longPressChange
-{
-    [self setTitle:@"完成" forState:0];
 }
 
 

@@ -11,22 +11,22 @@
 @interface BYSelectNewBar()
 {
     UILabel *sublabel;
+    UIButton *button;
 }
-@end
 
-#define BYScreenWidth [UIScreen mainScreen].bounds.size.width
-#define BYScreenHeight [UIScreen mainScreen].bounds.size.height
-#define Color_gray [UIColor colorWithRed:111.0/255 green:111.0/255 blue:111.0/255 alpha:1.0]
-#define sublabel_gray [UIColor colorWithRed:170.0/255 green:170.0/255 blue:170.0/255 alpha:1.0]
-#define Color_maingray [UIColor colorWithRed:238.0/255 green:238.0/255 blue:238.0/255 alpha:1.0]
+@end
 
 @implementation BYSelectNewBar
 
--(void)newBarHidden
+- (instancetype)initWithFrame:(CGRect)frame
 {
-    self.hidden = YES;
+    self = [super initWithFrame:frame];
+    if (self) {
+        [self makeNewBar];
+        self.hidden= YES;
+    }
+    return self;
 }
-
 -(void)makeNewBar
 {
     self.backgroundColor = Color_maingray;
@@ -43,12 +43,8 @@
     sublabel.textColor = sublabel_gray;
     sublabel.hidden = YES;
     [self addSubview:sublabel];
-    [[NSNotificationCenter defaultCenter] addObserver:sublabel
-                                             selector:@selector(longPressChange)
-                                                 name:@"long_press"
-                                               object:nil];
     
-    UIButton *button = [[UIButton alloc] initWithFrame:CGRectMake(BYScreenWidth-100, 5, 50, 20)];
+    button = [[UIButton alloc] initWithFrame:CGRectMake(BYScreenWidth-100, 5, 50, 20)];
     [button setTitle:@"排序" forState:0];
     [button setTitleColor:[UIColor redColor] forState:0];
     button.titleLabel.font = [UIFont systemFontOfSize:13];
@@ -58,18 +54,18 @@
     button.layer.borderColor = [[UIColor redColor] CGColor];
     button.tag = 0;
     [button addTarget:self
-               action:@selector(buttonclick:)
+               action:@selector(buttonclick)
      forControlEvents:1 << 6];
-    
-    [[NSNotificationCenter defaultCenter] addObserver:button
-                                             selector:@selector(longPressChange)
-                                                 name:@"long_press"
+    [self addSubview:button];
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(buttonclick)
+                                                 name:@"press_longPressGesture"
                                                object:nil];
     
-    [self addSubview:button];
 }
 
--(void)buttonclick:(UIButton *)button
+
+-(void)buttonclick
 {
     if ([button.titleLabel.text isEqualToString:@"完成"]) {
         [button setTitle:@"排序" forState:0];
@@ -80,11 +76,11 @@
         [button setTitle:@"完成" forState:0];
         sublabel.hidden = NO;
     }
-    [[NSNotificationCenter defaultCenter] postNotificationName:@"delete_btn_click"
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"srot_btn_click"
                                                         object:button
                                                       userInfo:nil];
     
-    [[NSNotificationCenter defaultCenter] postNotificationName:@"add_gesture"
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"add_panGesture"
                                                         object:button
                                                       userInfo:nil];
     

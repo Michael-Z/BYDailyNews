@@ -18,12 +18,11 @@
 }
 @property (nonatomic,strong) UIView   *moreChanelslabel;
 @property (nonatomic,strong) UIButton *delete_btn;
-@property (nonatomic,strong) UIButton *state_button;
 @property (nonatomic,strong) UIButton *hid_btn;
+
+
+@property (nonatomic,assign) BOOL isEqualFirst;
 @property (nonatomic,strong) UIPanGestureRecognizer *gesture;
 @property (nonatomic,strong) UILongPressGestureRecognizer *longGesture;
-
--(void)changeColorWithNoti:(NSNotification *)noti;
 -(void)makeSelectionViewWithTitle:(NSString *)title;
-
 @end
