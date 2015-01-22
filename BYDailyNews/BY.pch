@@ -18,6 +18,7 @@
 #define view_addWith 5
 #define arrow_width 40
 #define arrow_animation_time 0.7
+#define resetView_time 0.3
 
 
 #define Color_main     [UIColor colorWithRed:202.0/255 green:51.0/255 blue:54.0/255 alpha:1.0]

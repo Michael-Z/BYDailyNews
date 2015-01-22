@@ -123,14 +123,14 @@
     [property_button setTitleColor:[UIColor whiteColor] forState:1<<2];
     [property_button setTitleColor:Color_gray forState:1<<0];
     [property_button addTarget:self
-                        action:@selector(propertyButtonDidClick:)
+                        action:@selector(viewSelectWithButton:)
               forControlEvents:1 << 6];
     self.max_width += buttonW+32;
     [self.buttons_lists addObject:property_button];
     return property_button;
 }
 
--(void)propertyButtonDidClick:(UIButton *)button
+-(void)viewSelectWithButton:(UIButton *)button
 {
     if (self.select_button != button) {
         button.selected = YES;
@@ -138,28 +138,28 @@
         self.select_button.selected = NO;
         [self.select_button setTitleColor:Color_gray forState:0];
         self.select_button = button;
-        CGFloat animate_time = 0.3;
-        [UIView animateWithDuration:animate_time animations:^{
-            CGRect buttonBg_view_frame     = self.buttonBg_view.frame;
-            buttonBg_view_frame.size.width = button.frame.size.width+20;
-            self.buttonBg_view.frame       = buttonBg_view_frame;
-            CGFloat trans_width            = button.frame.origin.x-(buttonBg_view_frame.size.width-button.frame.size.width)/2-10;
-            self.buttonBg_view.transform  = CGAffineTransformMakeTranslation(trans_width, 0);
-        }];
-        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(animate_time * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-            [UIView animateWithDuration:animate_time animations:^{
-                if (button.frame.origin.x > BYScreenWidth-40-button.frame.size.width) {
-                    self.conditionScroll.contentOffset = CGPointMake(button.frame.origin.x-200, 0);
-                }
-                else {
-                    self.conditionScroll.contentOffset = CGPointMake(0, 0);
-                }
-            }];
-        });
-        [[NSNotificationCenter defaultCenter] postNotificationName:@"click_conditionBarItem"
-                                                            object:button
-                                                          userInfo:@{@"title":button.titleLabel.text}];
     }
+    CGFloat animate_time = 0.3;
+    [UIView animateWithDuration:animate_time animations:^{
+        CGRect buttonBg_view_frame     = self.buttonBg_view.frame;
+        buttonBg_view_frame.size.width = button.frame.size.width+20;
+        self.buttonBg_view.frame       = buttonBg_view_frame;
+        CGFloat trans_width            = button.frame.origin.x-(buttonBg_view_frame.size.width-button.frame.size.width)/2-10;
+        self.buttonBg_view.transform  = CGAffineTransformMakeTranslation(trans_width, 0);
+    }];
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(animate_time * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        [UIView animateWithDuration:animate_time animations:^{
+            if (button.frame.origin.x > BYScreenWidth-40-button.frame.size.width) {
+                self.conditionScroll.contentOffset = CGPointMake(button.frame.origin.x-200, 0);
+            }
+            else {
+                self.conditionScroll.contentOffset = CGPointMake(0, 0);
+            }}];
+    });
+    
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"click_conditionBarItem"
+                                                        object:button
+                                                      userInfo:@{@"title":button.titleLabel.text}];
 }
 
 
@@ -191,7 +191,7 @@
         }
     }
     UIButton *button = self.buttons_lists[index];
-    [self propertyButtonDidClick:button];
+    [self viewSelectWithButton:button];
     self.select_button = button;
 }
 
@@ -208,7 +208,6 @@
     UIButton *newItem = [self makePropertyButtonWithTitle:title];
     [self.conditionScroll addSubview:newItem];
     self.conditionScroll.contentSize = CGSizeMake(self.max_width+50, conditionScrollH);
-    
     [self.lists addObject:title];
 }
 
@@ -224,7 +223,7 @@
     NSString *title = [noti.userInfo objectForKey:@"title"];
     if ([self.select_button.titleLabel.text isEqualToString:title]) {
         UIButton *select_button = self.buttons_lists[0];
-        [self propertyButtonDidClick:select_button];
+        [self viewSelectWithButton:select_button];
         self.select_button = select_button;
     }
     [self removeItemWithTitle:title];
@@ -241,14 +240,11 @@
 -(void)changeItemPositionWithNoti:(NSNotification *)noti
 {
     NSString *title = [noti.userInfo objectForKey:@"title"];
-
     [self removeItemWithTitle:title];
-    [self resetFrame];
-    
-    //在尾部添加新item
     UIButton *newItem = [self makePropertyButtonWithTitle:title];
     [self.conditionScroll addSubview:newItem];
     [self.lists addObject:title];
+    [self resetFrame];
 }
 
 
@@ -270,15 +266,14 @@
             index = i;
         }
     }
-    UIButton *select_button = self.buttons_lists[index];
-    [self.buttons_lists removeObject:select_button];
     [self.lists removeObject:title];
-    
     [self.lists insertObject:title atIndex:theIndex];
-    [self.buttons_lists insertObject:select_button atIndex:theIndex];
+    UIButton *button = self.buttons_lists[index];
+    [self.buttons_lists removeObject:button];
+    [self.buttons_lists insertObject:button atIndex:theIndex];
     
+    [self viewSelectWithButton:button];
     [self resetFrame];
-    [self propertyButtonDidClick:self.select_button];
 }
 
 /******************************

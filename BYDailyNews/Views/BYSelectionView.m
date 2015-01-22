@@ -46,10 +46,6 @@
         self.delete_btn.hidden = YES;
         self.delete_btn.backgroundColor = Color_gray;
         [self addSubview:self.delete_btn];
-        [[NSNotificationCenter defaultCenter] addObserver:self.delete_btn
-                                                 selector:@selector(sortButtonClick)
-                                                     name:@"srot_btn_click"
-                                                   object:nil];
     }
 
     //屏蔽按钮
@@ -57,16 +53,13 @@
     self.hid_btn.tag = 0;
     self.hid_btn.hidden = NO;
     [self.hid_btn addTarget:self
-                     action:@selector(buttonclick)
+                     action:@selector(operationWithHidBtn)
            forControlEvents:1 << 6];
     [self addSubview:self.hid_btn];
-    [[NSNotificationCenter defaultCenter] addObserver:self.hid_btn
-                                             selector:@selector(hidbuttonClick)
-                                                 name:@"srot_btn_click"
-                                               object:nil];
+
     
     [self addTarget:self
-             action:@selector(operationWithNoHidBtn)
+             action:@selector(operationWithoutHidBtn)
    forControlEvents:1<<6];
     
     
@@ -79,7 +72,25 @@
                                              selector:@selector(conditionBarItemClick:)
                                                  name:@"click_conditionBarItem"
                                                object:nil];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(sortButtonClick)
+                                                 name:@"srot_btn_click"
+                                               object:nil];
 }
+
+/******************************
+ 
+ 通知:srot_btn_click
+ 
+ ******************************/
+-(void)sortButtonClick
+{
+    if (self.tag == 1){self.delete_btn.hidden = !self.delete_btn.hidden;}
+    self.hid_btn.hidden = !self.hid_btn.hidden;
+    self.hid_btn.tag = !self.hid_btn.tag;
+}
+
 
 /******************************
  
@@ -111,7 +122,7 @@
     if (self.gestureRecognizers != nil) {
         [self removeGestureRecognizer:self.gesture];
     }
-    if (self.tag == 1 && self.hid_btn.hidden == YES && !self.isEqualFirst) {
+    if (self.tag == 1 && !self.isEqualFirst && self.hid_btn.hidden == YES) {
         [self addGestureRecognizer:self.gesture];
     }
 }
@@ -126,42 +137,17 @@
 -(void)conditionBarItemClick:(NSNotification *)noti
 {
     NSString *title = [noti.userInfo objectForKey:@"title"];
+    BOOL isEqualToTitle = [self.titleLabel.text isEqualToString:title];
     
-    if (self.isEqualFirst && ![self.titleLabel.text isEqualToString:title]){
+    if (self.isEqualFirst && !isEqualToTitle){
         [self setTitleColor:border_gray forState:0];
     }
-    else if ([self.titleLabel.text isEqualToString:title]) {
+    else if (isEqualToTitle) {
         [self setTitleColor:[UIColor redColor] forState:0];
     }
     else{
         [self setTitleColor:Color_gray forState:0];
     }
-}
-
--(void)changeView1toView2
-{
-    [views_array removeObject:self];
-    [views2 insertObject:self atIndex:0];
-    views_array = views2;
-    self.tag = 0;
-    self.delete_btn.hidden = YES;
-    [self removeGestureRecognizer:self.gesture];
-    [[NSNotificationCenter defaultCenter] postNotificationName:@"remove_item"
-                                                        object:self
-                                                      userInfo:@{@"title":self.titleLabel.text}];
-    [self animationActionFinal];
-}
-
--(void)changeView2toView1
-{
-    [views_array removeObject:self];
-    [views1 insertObject:self atIndex:views1.count];
-    views_array = views1;
-    self.tag = 1;
-    [[NSNotificationCenter defaultCenter] postNotificationName:@"add_newItem"
-                                                        object:self
-                                                      userInfo:@{@"title":self.titleLabel.text}];
-    [self animationActionFinal];
 }
 
 /******************************
@@ -184,7 +170,7 @@
  在最后面添加这个item
  ******************************/
 
--(void)buttonclick
+-(void)operationWithHidBtn
 {
     if (self.hid_btn.hidden == NO) {
         if (self.tag == 1) {
@@ -219,19 +205,16 @@
  在最后面添加这个item 并添加可移动手势
  
  ******************************/
--(void)operationWithNoHidBtn
+-(void)operationWithoutHidBtn
 {
-    if (self.hid_btn.hidden == YES) {
-        if (self.tag == 1)
-        {
-            [self changeView1toView2];
-            
-        }
-        else if (self.tag == 0) {
-            self.delete_btn.hidden = NO;
-            [self addGestureRecognizer:self.gesture];
-            [self changeView2toView1];
-        }
+    if (self.tag == 1)
+    {
+        [self changeView1toView2];
+    }
+    else if (self.tag == 0) {
+        self.delete_btn.hidden = NO;
+        [self addGestureRecognizer:self.gesture];
+        [self changeView2toView1];
     }
 }
 
@@ -263,6 +246,7 @@
         case UIGestureRecognizerStateChanged:
         {
             BOOL isInArea1 = [self whetherInAreaWithArray:views1 Point:center];
+            
             if (isInArea1) {
                 NSInteger indexX = (center.x <= view_width+40)? 0 : (center.x - view_width-40)/(20+view_width) + 1;
                 NSInteger indexY = (center.y <= 65)? 0 : (center.y - 65)/45 + 1;
@@ -288,7 +272,7 @@
                                                                   userInfo:@{@"title":self.titleLabel.text}];
                 
             }
-            else if (center.y > [self array1MaxY]+50 && views_array == views1)
+            else if (center.y > [self array1MaxY]+50)
             {
                 [self changeView1toView2];
             }
@@ -300,6 +284,42 @@
         default:
             break;
     }
+}
+
+/******************************
+ 
+ 从上方 移到 下方
+ 
+ ******************************/
+-(void)changeView1toView2
+{
+    [views_array removeObject:self];
+    [views2 insertObject:self atIndex:0];
+    views_array = views2;
+    self.tag = 0;
+    self.delete_btn.hidden = YES;
+    [self removeGestureRecognizer:self.gesture];
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"remove_item"
+                                                        object:self
+                                                      userInfo:@{@"title":self.titleLabel.text}];
+    [self animationActionFinal];
+}
+
+/******************************
+ 
+ 从下方 移到 上方
+ 
+ ******************************/
+-(void)changeView2toView1
+{
+    [views_array removeObject:self];
+    [views1 insertObject:self atIndex:views1.count];
+    views_array = views1;
+    self.tag = 1;
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"add_newItem"
+                                                        object:self
+                                                      userInfo:@{@"title":self.titleLabel.text}];
+    [self animationActionFinal];
 }
 
 /******************************
@@ -338,11 +358,9 @@
 {
     for (int i = 0; i < views1.count; i++){
         if ([views1 objectAtIndex:i] != self){
-            [UIView animateWithDuration:0.3 delay:0 options:UIViewAnimationOptionLayoutSubviews animations:^{
+            [UIView animateWithDuration:resetView_time delay:0 options:UIViewAnimationOptionLayoutSubviews animations:^{
                 [[views1 objectAtIndex:i] setFrame:CGRectMake(20+(20+view_width)*(i%4), 20+45*(i/4), view_width, 25)];
-                
-            } completion:^(BOOL finished){
-            }];
+            } completion:^(BOOL finished){}];
         }
     }
 }
@@ -355,17 +373,14 @@
 -(void)animationForView2{
     for (int i = 0; i < views2.count; i++) {
         if ([views2 objectAtIndex:i] != self) {
-            [UIView animateWithDuration:0.3 delay:0 options:UIViewAnimationOptionLayoutSubviews animations:^{
+            [UIView animateWithDuration:resetView_time delay:0 options:UIViewAnimationOptionLayoutSubviews animations:^{
                 [[views2 objectAtIndex:i] setFrame:CGRectMake(20+(20+view_width)*(i%4), [self array1MaxY]+50+45*(i/4), view_width, 25)];
-            } completion:^(BOOL finished){
-            }];
+            } completion:^(BOOL finished){}];
         }
     }
-    [UIView animateWithDuration:0.3 delay:0 options:UIViewAnimationOptionLayoutSubviews animations:^{
+    [UIView animateWithDuration:resetView_time delay:0 options:UIViewAnimationOptionLayoutSubviews animations:^{
         [self.moreChanelslabel setFrame:CGRectMake(0,[self array1MaxY],BYScreenWidth,30)];
-    } completion:^(BOOL finished){
-        
-    }];
+    } completion:^(BOOL finished){}];
 }
 
 
@@ -377,24 +392,18 @@
 - (void)animationActionFinal
 {
     for (int i = 0; i <views1.count; i++) {
-        [UIView animateWithDuration:0.3 delay:0 options:UIViewAnimationOptionLayoutSubviews animations:^{
+        [UIView animateWithDuration:resetView_time delay:0 options:UIViewAnimationOptionLayoutSubviews animations:^{
             [[views1 objectAtIndex:i] setFrame:CGRectMake(20+(20+view_width)*(i%4), 20+45*(i/4), view_width, 25)];
-        } completion:^(BOOL finished){
-            
-        }];
+        } completion:^(BOOL finished){}];
     }
     for (int i = 0; i < views2.count; i++) {
-        [UIView animateWithDuration:0.3 delay:0 options:UIViewAnimationOptionLayoutSubviews animations:^{
+        [UIView animateWithDuration:resetView_time delay:0 options:UIViewAnimationOptionLayoutSubviews animations:^{
             [[views2 objectAtIndex:i] setFrame:CGRectMake(20+(20+view_width)*(i%4), [self array1MaxY]+50+45*(i/4), view_width, 25)];
-        } completion:^(BOOL finished){
-            
-        }];
+        } completion:^(BOOL finished){}];
     }
-    [UIView animateWithDuration:0.3 delay:0 options:UIViewAnimationOptionLayoutSubviews animations:^{
+    [UIView animateWithDuration:resetView_time delay:0 options:UIViewAnimationOptionLayoutSubviews animations:^{
         [self.moreChanelslabel setFrame:CGRectMake(0,[self array1MaxY],BYScreenWidth,30)];
-    } completion:^(BOOL finished){
-        
-    }];
+    } completion:^(BOOL finished){}];
 }
 
 @end

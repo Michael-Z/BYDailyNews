@@ -48,11 +48,11 @@
     //点击添加频道的label和他的背景色
     UIView *bg_view = [[UIView alloc] initWithFrame:CGRectMake(0,20+45*((listArray.count -1)/4+1),BYScreenWidth, 30)];
     bg_view.backgroundColor = Color_maingray;
-    [self addSubview:bg_view];
     UILabel *morevalue_label = [[UILabel alloc] initWithFrame:CGRectMake(20, 0, 100, 30)];
     morevalue_label.text = @"点击添加频道";
     morevalue_label.font = [UIFont systemFontOfSize:14];
     [bg_view addSubview:morevalue_label];
+    [self addSubview:bg_view];
     
     NSInteger num = listArray.count;
     for (int i =0; i <num; i++) {
@@ -80,6 +80,9 @@
         view->views2 = self.views2;
         [self addSubview:view];
     }
+    
+    self.contentSize = CGSizeMake(BYScreenWidth, CGRectGetMaxY(bg_view.frame)+20+45*((num2-1)/4+1) + 50);
+
 }
 
 @end

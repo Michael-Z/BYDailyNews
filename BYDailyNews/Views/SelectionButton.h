@@ -12,13 +12,11 @@
 @class BYSelectNewBar;
 
 typedef void (^arrowChange)(BYSelectionDetails *details , BYSelectNewBar *newBar);
-
 @interface SelectionButton : UIButton
 {
     @public
     BYSelectNewBar *NewBar;
     BYSelectionDetails *Details;
 }
-
 @property (nonatomic,copy) arrowChange change;
 @end

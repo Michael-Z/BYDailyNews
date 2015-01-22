@@ -13,7 +13,6 @@
 #import "BYSelectNewBar.h"
 #import "BYSelectionView.h"
 
-
 @interface BYMainController ()
 @property (nonatomic, strong) UIScrollView *conditionScroll;
 @property (nonatomic, strong) BYSelectionDetails *selection_details;

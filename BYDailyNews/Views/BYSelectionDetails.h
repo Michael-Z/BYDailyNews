@@ -8,7 +8,7 @@
 
 #import <UIKit/UIKit.h>
 
-@interface BYSelectionDetails : UIView
+@interface BYSelectionDetails : UIScrollView
 -(void)makeMainContent;
 @property (nonatomic,strong) NSMutableArray *views1;
 @property (nonatomic,strong) NSMutableArray *views2;

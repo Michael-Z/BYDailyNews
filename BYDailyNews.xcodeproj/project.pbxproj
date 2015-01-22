@@ -24,7 +24,6 @@
 		5353B2751A6FEDA500163594 /* otherProperties.plist in Resources */ = {isa = PBXBuildFile; fileRef = 5353B25F1A6FEDA500163594 /* otherProperties.plist */; };
 		5353B2761A6FEDA500163594 /* properties.plist in Resources */ = {isa = PBXBuildFile; fileRef = 5353B2601A6FEDA500163594 /* properties.plist */; };
 		5353B2771A6FEDA500163594 /* SelectionButton.m in Sources */ = {isa = PBXBuildFile; fileRef = 5353B2621A6FEDA500163594 /* SelectionButton.m */; };
-		5353B2781A6FEDA500163594 /* UIButton+BY.m in Sources */ = {isa = PBXBuildFile; fileRef = 5353B2641A6FEDA500163594 /* UIButton+BY.m */; };
 		5353B2801A6FEDA900163594 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 5353B27C1A6FEDA900163594 /* LaunchScreen.xib */; };
 		5353B2811A6FEDA900163594 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5353B27E1A6FEDA900163594 /* Main.storyboard */; };
 /* End PBXBuildFile section */
@@ -67,8 +66,6 @@
 		5353B2601A6FEDA500163594 /* properties.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = properties.plist; sourceTree = "<group>"; };
 		5353B2611A6FEDA500163594 /* SelectionButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SelectionButton.h; sourceTree = "<group>"; };
 		5353B2621A6FEDA500163594 /* SelectionButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SelectionButton.m; sourceTree = "<group>"; };
-		5353B2631A6FEDA500163594 /* UIButton+BY.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIButton+BY.h"; sourceTree = "<group>"; };
-		5353B2641A6FEDA500163594 /* UIButton+BY.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIButton+BY.m"; sourceTree = "<group>"; };
 		5353B27D1A6FEDA900163594 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = LaunchScreen.xib; sourceTree = "<group>"; };
 		5353B27F1A6FEDA900163594 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Main.storyboard; sourceTree = "<group>"; };
 		5353B2821A6FEE0300163594 /* BY.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BY.pch; sourceTree = "<group>"; };
@@ -177,8 +174,6 @@
 				5353B25E1A6FEDA500163594 /* BYSelectNewBar.m */,
 				5353B25B1A6FEDA500163594 /* BYSelectionView.h */,
 				5353B25C1A6FEDA500163594 /* BYSelectionView.m */,
-				5353B2631A6FEDA500163594 /* UIButton+BY.h */,
-				5353B2641A6FEDA500163594 /* UIButton+BY.m */,
 				5353B25F1A6FEDA500163594 /* otherProperties.plist */,
 				5353B2601A6FEDA500163594 /* properties.plist */,
 			);
@@ -302,7 +297,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				5353B2731A6FEDA500163594 /* BYSelectionView.m in Sources */,
-				5353B2781A6FEDA500163594 /* UIButton+BY.m in Sources */,
 				5353B26F1A6FEDA500163594 /* main.m in Sources */,
 				5353B2721A6FEDA500163594 /* BYSelectionDetails.m in Sources */,
 				532192DC1A6A9FD400A682A8 /* BYMainController.m in Sources */,
