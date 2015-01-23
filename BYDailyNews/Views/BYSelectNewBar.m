@@ -80,9 +80,5 @@
                                                         object:button
                                                       userInfo:nil];
     
-    [[NSNotificationCenter defaultCenter] postNotificationName:@"add_panGesture"
-                                                        object:button
-                                                      userInfo:nil];
-    
 }
 @end

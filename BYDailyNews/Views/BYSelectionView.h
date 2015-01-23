@@ -8,6 +8,8 @@
 
 #import <UIKit/UIKit.h>
 
+typedef void(^operateBlock)(NSString * , NSString * , int);
+
 
 @interface BYSelectionView : UIButton
 {
@@ -19,6 +21,7 @@
 @property (nonatomic,strong) UIView   *moreChanelslabel;
 @property (nonatomic,strong) UIButton *delete_btn;
 @property (nonatomic,strong) UIButton *hid_btn;
+@property (nonatomic,copy)   operateBlock operations;
 
 
 @property (nonatomic,assign) BOOL isEqualFirst;

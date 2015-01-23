@@ -34,7 +34,7 @@
     
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(ArrowClick)
-                                                 name:@"select_itemOfView"
+                                                 name:@"arrow_change"
                                                object:nil];
     
     return self;
@@ -42,16 +42,18 @@
 
 -(void)ArrowClick
 {
-    __weak typeof(self) arrow_btn = self;
-    self.change = ^(BYSelectionDetails *details,BYSelectNewBar *newBar){
-        newBar.hidden = (details.frame.origin.y<0)?NO:YES;
-        [UIView animateWithDuration:arrow_animation_time animations:^{
-            CGAffineTransform rotation = arrow_btn.imageView.transform;
-            arrow_btn.imageView.transform = CGAffineTransformRotate(rotation,M_PI);
-            details.transform = (details.frame.origin.y<0)?CGAffineTransformMakeTranslation(0, BYScreenHeight):CGAffineTransformMakeTranslation(0, -BYScreenHeight);
-        }];
-    };
-    self.change(Details,NewBar);
+
+        __weak typeof(self) arrow_btn = self;
+        self.change = ^(BYSelectionDetails *details,BYSelectNewBar *newBar){
+            newBar.hidden = (details.frame.origin.y<0)?NO:YES;
+            [UIView animateWithDuration:arrow_animation_time animations:^{
+                CGAffineTransform rotation = arrow_btn.imageView.transform;
+                arrow_btn.imageView.transform = CGAffineTransformRotate(rotation,M_PI);
+                details.transform = (details.frame.origin.y<0)?CGAffineTransformMakeTranslation(0, BYScreenHeight):CGAffineTransformMakeTranslation(0, -BYScreenHeight);
+            }];
+        };
+        self.change(Details,NewBar);
+
 }
 
 - (CGRect)imageRectForContentRect:(CGRect)contentRect

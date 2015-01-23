@@ -11,7 +11,7 @@
 @class BYSelectionDetails;
 @class BYSelectNewBar;
 
-typedef void (^arrowChange)(BYSelectionDetails *details , BYSelectNewBar *newBar);
+typedef void (^arrowChange)(BYSelectionDetails* , BYSelectNewBar*);
 @interface SelectionButton : UIButton
 {
     @public

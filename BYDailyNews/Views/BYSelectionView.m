@@ -10,12 +10,6 @@
 
 @implementation BYSelectionView
 
-
-/******************************
- 
- 添加单个view
- 
- ******************************/
 -(void)makeSelectionViewWithTitle:(NSString *)title
 {    
     self.gesture = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(panView:)];
@@ -62,11 +56,18 @@
              action:@selector(operationWithoutHidBtn)
    forControlEvents:1<<6];
     
-    
-    [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(addGesture)
-                                                 name:@"add_panGesture"
-                                               object:nil];
+    __weak typeof(self) unself = self;
+    self.operations = ^(NSString *notiName, NSString *notiTitle, int notiIndex){
+        
+        NSMutableDictionary *dic = [[NSMutableDictionary alloc] init];
+        [dic setObject:notiName forKey:@"noti_name"];
+        [dic setObject:notiTitle forKey:@"noti_title"];
+        [dic setObject:[NSNumber numberWithInt:notiIndex] forKey:@"noti_index"];
+        [[NSNotificationCenter defaultCenter] postNotificationName:@"operations_from_selectionView"
+                                                            object:unself
+                                                          userInfo:dic];
+        
+    };
     
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(conditionBarItemClick:)
@@ -79,22 +80,10 @@
                                                object:nil];
 }
 
-/******************************
- 
- 通知:srot_btn_click
- 
- ******************************/
--(void)sortButtonClick
-{
-    if (self.tag == 1){self.delete_btn.hidden = !self.delete_btn.hidden;}
-    self.hid_btn.hidden = !self.hid_btn.hidden;
-    self.hid_btn.tag = !self.hid_btn.tag;
-}
-
 
 /******************************
  
- 已经添加的longpress事件
+ longpress事件
  
  ******************************/
 -(void)longPress
@@ -109,16 +98,17 @@
     }
 }
 
-
 /******************************
  
- 通知:add_gesture
- 排序按钮点击后 为每个在上方区域的item
- 添加pan手势
+ 通知:srot_btn_click
  
  ******************************/
--(void)addGesture
+-(void)sortButtonClick
 {
+    if (self.tag == 1){self.delete_btn.hidden = !self.delete_btn.hidden;}
+    self.hid_btn.hidden = !self.hid_btn.hidden;
+    self.hid_btn.tag = !self.hid_btn.tag;
+    
     if (self.gestureRecognizers != nil) {
         [self removeGestureRecognizer:self.gesture];
     }
@@ -136,8 +126,7 @@
  ******************************/
 -(void)conditionBarItemClick:(NSNotification *)noti
 {
-    NSString *title = [noti.userInfo objectForKey:@"title"];
-    BOOL isEqualToTitle = [self.titleLabel.text isEqualToString:title];
+    BOOL isEqualToTitle = [self.titleLabel.text isEqualToString:[noti.userInfo objectForKey:@"title"]];
     
     if (self.isEqualFirst && !isEqualToTitle){
         [self setTitleColor:border_gray forState:0];
@@ -175,10 +164,7 @@
     if (self.hid_btn.hidden == NO) {
         if (self.tag == 1) {
             [self setTitleColor:[UIColor redColor] forState:0];
-            NSString *title = self.titleLabel.text;
-            [[NSNotificationCenter defaultCenter] postNotificationName:@"select_itemOfView"
-                                                                object:self
-                                                              userInfo:@{@"title":title}];
+            self.operations(@"select_itemOfView",self.titleLabel.text,0);
             [self animationActionFinal];
         }
         else if (self.tag == 0)
@@ -256,10 +242,7 @@
                 [views1 insertObject:self atIndex:index];
                 views_array = views1;
                 [self animationForView1];
-                [[NSNotificationCenter defaultCenter] postNotificationName:@"switch_position"
-                                                                    object:self
-                                                                  userInfo:@{@"title":self.titleLabel.text,
-                                                                             @"index":[NSString stringWithFormat:@"%d",(int)index]}];
+                self.operations(@"switch_position",self.titleLabel.text,(int)index);
                 
             }
             else if (!isInArea1 && center.y < [self array1MaxY]+50) {
@@ -267,13 +250,10 @@
                 [views1 insertObject:self atIndex:views1.count];
                 views_array = views1;
                 [self animationForView1];
-                [[NSNotificationCenter defaultCenter] postNotificationName:@"move_itemToLast"
-                                                                    object:self
-                                                                  userInfo:@{@"title":self.titleLabel.text}];
+                self.operations(@"move_itemToLast",self.titleLabel.text,0);
                 
             }
-            else if (center.y > [self array1MaxY]+50)
-            {
+            else if (center.y > [self array1MaxY]+50){
                 [self changeView1toView2];
             }
         }
@@ -299,9 +279,7 @@
     self.tag = 0;
     self.delete_btn.hidden = YES;
     [self removeGestureRecognizer:self.gesture];
-    [[NSNotificationCenter defaultCenter] postNotificationName:@"remove_item"
-                                                        object:self
-                                                      userInfo:@{@"title":self.titleLabel.text}];
+    self.operations(@"remove_item",self.titleLabel.text,0);
     [self animationActionFinal];
 }
 
@@ -316,9 +294,7 @@
     [views1 insertObject:self atIndex:views1.count];
     views_array = views1;
     self.tag = 1;
-    [[NSNotificationCenter defaultCenter] postNotificationName:@"add_newItem"
-                                                        object:self
-                                                      userInfo:@{@"title":self.titleLabel.text}];
+    self.operations(@"add_newItem",self.titleLabel.text,0);
     [self animationActionFinal];
 }
 
@@ -358,9 +334,7 @@
 {
     for (int i = 0; i < views1.count; i++){
         if ([views1 objectAtIndex:i] != self){
-            [UIView animateWithDuration:resetView_time delay:0 options:UIViewAnimationOptionLayoutSubviews animations:^{
-                [[views1 objectAtIndex:i] setFrame:CGRectMake(20+(20+view_width)*(i%4), 20+45*(i/4), view_width, 25)];
-            } completion:^(BOOL finished){}];
+            [self animationWithView:[views1 objectAtIndex:i] frame:CGRectMake(20+(20+view_width)*(i%4), 20+45*(i/4), view_width, 25)];
         }
     }
 }
@@ -373,14 +347,10 @@
 -(void)animationForView2{
     for (int i = 0; i < views2.count; i++) {
         if ([views2 objectAtIndex:i] != self) {
-            [UIView animateWithDuration:resetView_time delay:0 options:UIViewAnimationOptionLayoutSubviews animations:^{
-                [[views2 objectAtIndex:i] setFrame:CGRectMake(20+(20+view_width)*(i%4), [self array1MaxY]+50+45*(i/4), view_width, 25)];
-            } completion:^(BOOL finished){}];
+            [self animationWithView:[views2 objectAtIndex:i] frame:CGRectMake(20+(20+view_width)*(i%4), [self array1MaxY]+50+45*(i/4), view_width, 25)];
         }
     }
-    [UIView animateWithDuration:resetView_time delay:0 options:UIViewAnimationOptionLayoutSubviews animations:^{
-        [self.moreChanelslabel setFrame:CGRectMake(0,[self array1MaxY],BYScreenWidth,30)];
-    } completion:^(BOOL finished){}];
+    [self animationWithView:self.moreChanelslabel frame:CGRectMake(0,[self array1MaxY],BYScreenWidth,30)];
 }
 
 
@@ -392,17 +362,18 @@
 - (void)animationActionFinal
 {
     for (int i = 0; i <views1.count; i++) {
-        [UIView animateWithDuration:resetView_time delay:0 options:UIViewAnimationOptionLayoutSubviews animations:^{
-            [[views1 objectAtIndex:i] setFrame:CGRectMake(20+(20+view_width)*(i%4), 20+45*(i/4), view_width, 25)];
-        } completion:^(BOOL finished){}];
+        [self animationWithView:[views1 objectAtIndex:i] frame:CGRectMake(20+(20+view_width)*(i%4), 20+45*(i/4), view_width, 25)];
     }
     for (int i = 0; i < views2.count; i++) {
-        [UIView animateWithDuration:resetView_time delay:0 options:UIViewAnimationOptionLayoutSubviews animations:^{
-            [[views2 objectAtIndex:i] setFrame:CGRectMake(20+(20+view_width)*(i%4), [self array1MaxY]+50+45*(i/4), view_width, 25)];
-        } completion:^(BOOL finished){}];
+        [self animationWithView:[views2 objectAtIndex:i] frame:CGRectMake(20+(20+view_width)*(i%4), [self array1MaxY]+50+45*(i/4), view_width, 25)];
     }
+    [self animationWithView:self.moreChanelslabel frame:CGRectMake(0,[self array1MaxY],BYScreenWidth,30)];
+}
+
+-(void)animationWithView:(UIView *)view frame:(CGRect)frame
+{
     [UIView animateWithDuration:resetView_time delay:0 options:UIViewAnimationOptionLayoutSubviews animations:^{
-        [self.moreChanelslabel setFrame:CGRectMake(0,[self array1MaxY],BYScreenWidth,30)];
+        [view setFrame:frame];
     } completion:^(BOOL finished){}];
 }
 
