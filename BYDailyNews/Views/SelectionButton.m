@@ -29,35 +29,24 @@
         [self addTarget:self
                  action:@selector(ArrowClick)
        forControlEvents:1 << 6];
+        [[NSNotificationCenter defaultCenter] addObserver:self
+                                                 selector:@selector(ArrowClick)
+                                                     name:@"arrow_change"
+                                                   object:nil];
     }
-    
-    
-    [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(ArrowClick)
-                                                 name:@"arrow_change"
-                                               object:nil];
-    
     return self;
 }
 
--(void)ArrowClick
-{
-
-        __weak typeof(self) arrow_btn = self;
-        self.change = ^(BYSelectionDetails *details,BYSelectNewBar *newBar){
-            newBar.hidden = (details.frame.origin.y<0)?NO:YES;
-            [UIView animateWithDuration:arrow_animation_time animations:^{
-                CGAffineTransform rotation = arrow_btn.imageView.transform;
-                arrow_btn.imageView.transform = CGAffineTransformRotate(rotation,M_PI);
-                details.transform = (details.frame.origin.y<0)?CGAffineTransformMakeTranslation(0, BYScreenHeight):CGAffineTransformMakeTranslation(0, -BYScreenHeight);
-            }];
-        };
-        self.change(Details,NewBar);
-
+-(void)ArrowClick{
+    self.Newbar.hidden = (self.Detail.frame.origin.y<0)?NO:YES;
+    [UIView animateWithDuration:arrow_animation_time animations:^{
+        CGAffineTransform rotation = self.imageView.transform;
+        self.imageView.transform = CGAffineTransformRotate(rotation,M_PI);
+        self.Detail.transform = (self.Detail.frame.origin.y<0)?CGAffineTransformMakeTranslation(0, BYScreenHeight):CGAffineTransformMakeTranslation(0, -BYScreenHeight);
+    }];
 }
 
-- (CGRect)imageRectForContentRect:(CGRect)contentRect
-{
+- (CGRect)imageRectForContentRect:(CGRect)contentRect{
     CGFloat image_width = 18;
     return CGRectMake((contentRect.size.width-image_width)/2, (conditionScrollH-image_width)/2, image_width, image_width);
 }

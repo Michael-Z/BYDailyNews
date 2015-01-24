@@ -32,7 +32,6 @@
     [self.navigationController.navigationBar setTranslucent:NO];
     [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleLightContent];
     [self.navigationController.navigationBar setBackgroundImage:[UIImage imageNamed:@"nav_bg"] forBarMetrics:UIBarMetricsDefault];
-    
 }
 
 
@@ -51,8 +50,8 @@
     
     
     SelectionButton *arrow = [[SelectionButton alloc] initWithFrame:CGRectMake(BYScreenWidth-arrow_width, 0, arrow_width, conditionScrollH)];
-    arrow -> NewBar = selection_newBar;
-    arrow -> Details = selection_details;
+    arrow.Detail = selection_details;
+    arrow.Newbar = selection_newBar;
     [self.view addSubview:arrow];
 }
 @end
