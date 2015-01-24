@@ -66,8 +66,9 @@
         [[NSNotificationCenter defaultCenter] postNotificationName:@"operations_from_selectionView"
                                                             object:unself
                                                           userInfo:dic];
-        
+        [[NSNotificationCenter defaultCenter] removeObserver:unself name:@"operations_from_selectionView" object:nil];
     };
+    
     
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(conditionBarItemClick:)
@@ -92,6 +93,7 @@
         [[NSNotificationCenter defaultCenter] postNotificationName:@"press_longPressGesture"
                                                             object:self
                                                           userInfo:nil];
+        [[NSNotificationCenter defaultCenter] removeObserver:self name:@"press_longPressGesture" object:nil];
         if (self.tag == 1) {
             [self addGestureRecognizer:self.gesture];
         }

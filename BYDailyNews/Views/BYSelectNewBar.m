@@ -79,6 +79,6 @@
     [[NSNotificationCenter defaultCenter] postNotificationName:@"srot_btn_click"
                                                         object:button
                                                       userInfo:nil];
-    
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:@"srot_btn_click" object:nil];
 }
 @end
